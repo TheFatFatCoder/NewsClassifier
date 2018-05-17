@@ -7,6 +7,8 @@ package newsclassifier;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -14,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
@@ -32,7 +36,7 @@ public class View extends JFrame{
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        
+        c.insets = new Insets(0,10,10,0);
         inputLabel = new JLabel("Input news link here");
         c.gridx = 0;
         c.gridy = 0;
@@ -47,15 +51,27 @@ public class View extends JFrame{
         c.gridx = 0;
         c.gridy = 1;
         panel.add(outputLabel,c);
-        
-        String html = "<html><head><title>First parse</title></head>"
-  + "<body><p>Parsed HTML into a doc.</p></body></html>";
-        Document doc = Jsoup.parse(html);
-        String document = doc.toString();
-        outputLabel.setText(document);
+        try{
+            Document doc = Jsoup.connect("https://regional.kompas.com/read/2018/05/17/13234841/ketika-risma-tiba-tiba-bersujud-di-kaki-anggota-takmir-masjid").get();
+            Elements newsContent = doc.select("div.read__content");
+            //System.out.println(newsContent);
+            newsContent = newsContent.select("p");
+            System.out.print("");
+            for (Element headline: newsContent){
+                outputLabel.setText(outputLabel.getText()+headline);
+                //System.out.println(headline);
+            }
+            //outputLabel.setText(document);
+        }catch(IOException ie){
+            
+        }
         
         add(panel);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    
+    public static void main (String[] args){
+        new View();
     }
 }

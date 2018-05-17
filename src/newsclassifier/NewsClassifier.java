@@ -29,9 +29,10 @@ public class NewsClassifier {
 
         try {
             //create view
-            View view = new View();
+            //View view = new View();
             // read the training data
-            InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-category.train"));
+            //InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-category.train"));
+            InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("C:\\Users\\Steven\\Documents\\NetBeansProjects\\NewsClassifier\\src\\newsclassifier\\"+"en-movie-category.train"));
             ObjectStream lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
             ObjectStream sampleStream = new DocumentSampleStream(lineStream);
 
@@ -46,7 +47,8 @@ public class NewsClassifier {
             System.out.println("\nModel is successfully trained.");
 
             // save the model to local
-            BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-classifier-naive-bayes.bin"));
+            //BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-classifier-naive-bayes.bin"));
+            BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Steven\\Documents\\NetBeansProjects\\NewsClassifier\\src\\newsclassifier\\"+"en-movie-classifier-naive-bayes.bin"));
             model.serialize(modelOut);
             System.out.println("\nTrained Model is saved locally at : "+"model"+File.separator+"en-movie-classifier-naive-bayes.bin");
 
