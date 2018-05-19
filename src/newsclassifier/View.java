@@ -8,10 +8,13 @@ package newsclassifier;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jsoup.Jsoup;
@@ -32,7 +35,7 @@ public class View extends JFrame{
     public View(){
         super("News Classifier");
         setLocation(0, 10);
-        setSize(800,500);
+        setSize(500,300);
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -46,25 +49,45 @@ public class View extends JFrame{
         c.gridx = 1;
         panel.add(inputField, c);
         
-        outputLabel = new JLabel("");
-        c.gridwidth = 1;
+        enterButton = new JButton("Enter");
+        c.gridx=2;
+        panel.add(enterButton, c);
+        
+        outputLabel = new JLabel("Please only enter TheJakartaPost link");
+        c.gridwidth = 3;
         c.gridx = 0;
         c.gridy = 1;
         panel.add(outputLabel,c);
-        try{
-            Document doc = Jsoup.connect("http://www.thejakartapost.com/news/2018/05/18/bandung-surakarta-zoos-exchange-deer-to-prevent-inbreeding.html").get();
-            Elements newsContent = doc.select("div.show-define-text");
-            //System.out.println(newsContent);
-            newsContent = newsContent.select("p");
-            System.out.print("");
-            for (Element headline: newsContent){
-                outputLabel.setText(outputLabel.getText()+headline.text());
-                //System.out.println(headline);
-            }
-            //outputLabel.setText(document);
-        }catch(IOException ie){
-            
-        }
+        
+        ActionListener enterListener = new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (inputField.getText().contains("thejakartapost.com")) {
+                            try{
+                                Document doc = Jsoup.connect(inputField.getText()).get();
+                                Elements newsContent = doc.select("div.show-define-text");
+                                //System.out.println(newsContent);
+                                newsContent = newsContent.select("p");
+                                System.out.print("");
+                                String body = "";
+                                for (Element headline: newsContent){
+                                    body += headline.text();
+                                }
+                                System.out.println(body);
+                                NLPModel.findCategory(body);
+                            }catch(IllegalArgumentException ie){
+                                JOptionPane.showMessageDialog(null, "Please enter a valid link", "WARNING", JOptionPane.WARNING_MESSAGE);
+                            }catch(IOException ie){
+                                
+                            }
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Please ONLY use thejakartapost.com link", "WARNING", JOptionPane.WARNING_MESSAGE);
+                        }
+                    }
+                };
+        
+        enterButton.addActionListener(enterListener);
+        inputField.addActionListener(enterListener);
         
         add(panel);
         setVisible(true);
