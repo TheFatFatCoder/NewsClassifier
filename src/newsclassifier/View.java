@@ -52,13 +52,13 @@ public class View extends JFrame{
         c.gridy = 1;
         panel.add(outputLabel,c);
         try{
-            Document doc = Jsoup.connect("https://regional.kompas.com/read/2018/05/17/13234841/ketika-risma-tiba-tiba-bersujud-di-kaki-anggota-takmir-masjid").get();
-            Elements newsContent = doc.select("div.read__content");
+            Document doc = Jsoup.connect("http://www.thejakartapost.com/news/2018/05/18/bandung-surakarta-zoos-exchange-deer-to-prevent-inbreeding.html").get();
+            Elements newsContent = doc.select("div.show-define-text");
             //System.out.println(newsContent);
             newsContent = newsContent.select("p");
             System.out.print("");
             for (Element headline: newsContent){
-                outputLabel.setText(outputLabel.getText()+headline);
+                outputLabel.setText(outputLabel.getText()+headline.text());
                 //System.out.println(headline);
             }
             //outputLabel.setText(document);
