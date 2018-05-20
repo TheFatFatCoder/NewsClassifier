@@ -1,3 +1,5 @@
+package newsclassifier;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,16 +25,14 @@ import opennlp.tools.util.TrainingParameters;
  * Training of Document Categorizer using Naive Bayes Algorithm in OpenNLP for Document Classification
  * @author www.tutorialkart.com
  */
-public class NewsClassifier {
-
-    public static void main(String[] args) {
-
+public class NLPModel {
+    private String conclusion;
+    
+    public NLPModel(String text){
         try {
-            //create view
-            //View view = new View();
             // read the training data
-            //InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-category.train"));
-            InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("C:\\Users\\Steven\\Documents\\NetBeansProjects\\NewsClassifier\\src\\newsclassifier\\"+"en-movie-category.train"));
+            InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-category.train"));
+            //InputStreamFactory dataIn = new MarkableFileInputStreamFactory(new File("C:\\Users\\Steven\\Documents\\NetBeansProjects\\NewsClassifier\\src\\newsclassifier\\"+"en-movie-category.train"));
             ObjectStream lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
             ObjectStream sampleStream = new DocumentSampleStream(lineStream);
 
@@ -47,28 +47,37 @@ public class NewsClassifier {
             System.out.println("\nModel is successfully trained.");
 
             // save the model to local
-            //BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-classifier-naive-bayes.bin"));
-            BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Steven\\Documents\\NetBeansProjects\\NewsClassifier\\src\\newsclassifier\\"+"en-movie-classifier-naive-bayes.bin"));
+            BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("/home/john/Desktop/NewsClassifier/NewsClassifier/src/newsclassifier/"+"en-movie-classifier-naive-bayes.bin"));
+            //BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Steven\\Documents\\NetBeansProjects\\NewsClassifier\\src\\newsclassifier\\"+"en-movie-classifier-naive-bayes.bin"));
             model.serialize(modelOut);
             System.out.println("\nTrained Model is saved locally at : "+"model"+File.separator+"en-movie-classifier-naive-bayes.bin");
 
             // test the model file by subjecting it to prediction
-            DocumentCategorizer doccat = new DocumentCategorizerME(model);
-            String[] docWords = "Afterwards Stuart and Charlie notice Kate in the photos Stuart took at Leopolds ball and realise that her destiny must be to go back and be with Leopold That night while Kate is accepting her promotion at a company banquet he and Charlie race to meet her and show her the pictures Kate initially rejects their overtures and goes on to give her acceptance speech but it is there that she sees Stuarts picture and realises that she truly wants to be with Leopold".replaceAll("[^A-Za-z]", " ").split(" ");
+            DocumentCategorizer doccat = new DocumentCategorizerME(model); //the real NLP Model
+            String[] docWords = text.replaceAll("[^A-Za-z]", " ").split(" ");
             double[] aProbs = doccat.categorize(docWords);
 
             // print the probabilities of the categories
             System.out.println("\n---------------------------------\nCategory : Probability\n---------------------------------");
+            conclusion = "<html><br>---------------------------------<br>Category : Probability<br>---------------------------------<br>";
             for(int i=0;i<doccat.getNumberOfCategories();i++){
                     System.out.println(doccat.getCategory(i)+" : "+aProbs[i]);
+                    conclusion += doccat.getCategory(i)+": "+aProbs[i]+"<br>";
             }
             System.out.println("---------------------------------");
+            conclusion += "---------------------------------<br>";
 
             System.out.println("\n"+doccat.getBestCategory(aProbs)+" : is the predicted category for the given sentence.");
+            conclusion += "Prediction result : "+doccat.getBestCategory(aProbs)+"<br>";
         }
         catch (IOException e) {
             System.out.println("An exception in reading the training file. Please check.");
             e.printStackTrace();
         }
     }
+    
+    public String getConclusion(){
+        return this.conclusion;
+    }
+   
 }

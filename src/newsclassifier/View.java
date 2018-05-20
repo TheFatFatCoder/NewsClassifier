@@ -66,22 +66,25 @@ public class View extends JFrame{
                             try{
                                 Document doc = Jsoup.connect(inputField.getText()).get();
                                 Elements newsContent = doc.select("div.show-define-text");
-                                //System.out.println(newsContent);
-                                newsContent = newsContent.select("p");
+                                
+                                newsContent = newsContent.select("p"); //select innerHTML from <p>___</p>
                                 System.out.print("");
                                 String body = "";
                                 for (Element headline: newsContent){
                                     body += headline.text();
                                 }
-                                System.out.println(body);
-                                NLPModel.findCategory(body);
+                                
+                                NLPModel nlpModel = new NLPModel(body);
+                                outputLabel.setText(nlpModel.getConclusion());
                             }catch(IllegalArgumentException ie){
                                 JOptionPane.showMessageDialog(null, "Please enter a valid link", "WARNING", JOptionPane.WARNING_MESSAGE);
+                                outputLabel.setText("Please ONLY use thejakartapost.com link");
                             }catch(IOException ie){
                                 
                             }
                         }else{
                             JOptionPane.showMessageDialog(null, "Please ONLY use thejakartapost.com link", "WARNING", JOptionPane.WARNING_MESSAGE);
+                            outputLabel.setText("Please ONLY use thejakartapost.com link");
                         }
                     }
                 };
